@@ -1,0 +1,21 @@
+version: "3"
+services:
+  face:
+    networks:
+      bridge_network:
+    image: python-main-image
+    entrypoint: python3 face_validator/server.py
+    environment:
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+
+  model_manager:
+    networks:
+      bridge_network:
+    image: python-main-image
+    entrypoint: python3 model_manager/server.py
+    ports:
+      - "80:80"
+
+networks:
+  bridge_network:
+    driver: bridge
