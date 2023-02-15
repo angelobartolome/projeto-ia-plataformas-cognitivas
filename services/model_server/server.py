@@ -2,7 +2,7 @@ import pandas as pd
 import json
 from flask import Flask, request
 import joblib
-
+import sys
 app = Flask(__name__)
 
 
@@ -48,6 +48,9 @@ def predict(request=request):
 
 
 if __name__ == '__main__':
-    print('Starting Model server...')
-    model = joblib.load('../../train/modelo02.joblib')
-    app.run(port=8080, host='0.0.0.0')
+    args = sys.argv[1:]
+    file = args[0]
+
+    print('Starting Model server for file: {0}'.format(file))
+    model = joblib.load(file)
+    app.run(port=9999, host='0.0.0.0')

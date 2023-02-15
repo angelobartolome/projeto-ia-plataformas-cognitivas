@@ -5,16 +5,16 @@ RUN apt-get update
 RUN mkdir -p /log
 RUN mkdir -p /server
 
-COPY . /server
-
-WORKDIR /server
-
 # Instala pacotes Python
 RUN pip install --upgrade pip
 
 COPY requirements.txt /server/requirements.txt
 
 RUN pip install -r /server/requirements.txt
+
+COPY . /server
+
+WORKDIR /server
 
 # Expõe alguns diretórios para o HOST
 VOLUME /server

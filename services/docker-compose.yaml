@@ -16,6 +16,18 @@ services:
     ports:
       - "80:80"
 
+  model01:
+    networks:
+      bridge_network:
+    image: python-main-image
+    entrypoint: python3 model_server/server.py models_data/modelo01.joblib
+
+  model02:
+    networks:
+      bridge_network:
+    image: python-main-image
+    entrypoint: python3 model_server/server.py models_data/modelo02.joblib
+
 networks:
   bridge_network:
     driver: bridge
