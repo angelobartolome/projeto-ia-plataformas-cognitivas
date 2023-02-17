@@ -34,11 +34,11 @@ if __name__ == "__main__":
     clf.fit(X=X_train[independentcols], y=y_train)
     clf.independentcols = independentcols
     clf_acuracia = clf.score(X=X_test[independentcols], y=y_test)
-    print("Modelo 01 (classificador), criado com acurácia de: [{0}]".format(
+    print("Modelo 03 (classificador), criado com acurácia de: [{0}]".format(
         clf_acuracia))
 
     # Salva ambos os modelos
-    joblib.dump(clf, './modelo01.joblib')
-    print("Modelo 01 (classificador) salvo com sucesso.")
+    joblib.dump(clf, './modelo03.joblib')
+    print("Modelo 03 (classificador) salvo com sucesso.")
 
     pass
