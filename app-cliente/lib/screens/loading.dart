@@ -174,7 +174,7 @@ class _LoadingPictureScreenState extends State<LoadingPictureScreen> {
       }
 
       return Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
         child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -203,46 +203,55 @@ class _LoadingPictureScreenState extends State<LoadingPictureScreen> {
       );
     }
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () {
-          formViewmodel.reset();
-          Navigator.of(context).pushNamedAndRemoveUntil(
-            "/",
-            (Route<dynamic> route) => false,
-          );
-        },
-        child: Container(
-          width: double.infinity,
-          child: Column(
-            children: [
-              buildResultForModel(0),
-              buildResultForModel(1),
-              Container(
+    return Container(
+      child: Column(
+        children: [
+          buildResultForModel(0),
+          buildResultForModel(1),
+          const SizedBox(height: 24),
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                formViewmodel.reset();
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  "/",
+                  (Route<dynamic> route) => false,
+                );
+              },
+              child: Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: formViewmodel.isApproved ? Colors.green : Colors.red,
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(4),
-                  ),
-                ),
-                child: Text(
-                  formViewmodel.isApproved
-                      ? "Empréstimo concedido!"
-                      : "Empréstimo negado!",
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.inter(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
+                child: Column(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: formViewmodel.isApproved
+                            ? Colors.green
+                            : Colors.red,
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(4),
+                        ),
+                      ),
+                      child: Text(
+                        formViewmodel.isApproved
+                            ? "Empréstimo concedido!"
+                            : "Empréstimo negado!",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -277,7 +286,6 @@ class _LoadingPictureScreenState extends State<LoadingPictureScreen> {
               ),
               const SizedBox(height: 24),
               renderPicture(),
-              const Spacer(),
               renderFinalResult(),
             ],
           ),

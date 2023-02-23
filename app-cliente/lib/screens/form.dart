@@ -1,6 +1,4 @@
-import 'dart:io';
-
-import 'package:camera/camera.dart';
+import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -16,6 +14,9 @@ class FormScreen extends StatefulWidget {
 }
 
 class _FormScreenState extends State<FormScreen> {
+  final MoneyMaskedTextController _valueController =
+      MoneyMaskedTextController(leftSymbol: "R\$ ");
+
   @override
   Widget build(BuildContext context) {
     FormViewmodel formViewmodel =
@@ -98,12 +99,14 @@ class _FormScreenState extends State<FormScreen> {
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 keyboardType: TextInputType.number,
                 onChanged: (value) {
-                  formViewmodel.updateIncome(double.parse(value));
+                  formViewmodel
+                      .updateIncome(_valueController.numberValue.toDouble());
                 },
+                controller: _valueController,
                 decoration: InputDecoration(
                   floatingLabelBehavior: FloatingLabelBehavior.always,
                   labelText: 'Renda',
-                  hintText: 'Ex: R\$ 2.500,00',
+                  hintText: 'R\$ 2.500,00',
                   border: const OutlineInputBorder(),
                   labelStyle: GoogleFonts.inter(
                     color: Colors.black,

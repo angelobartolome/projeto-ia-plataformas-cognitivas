@@ -12,12 +12,15 @@ if __name__ == "__main__":
     mydf = pd.read_csv('./data.csv')
 
     targetcol = 'Status'
-    independentcols = ['income', 'age', 'year', 'Credit_Score']
+    independentcols = ['income', 'age', 'Gender']
+
+    mydf['Gender'] = mydf['Gender'].str.lower()
 
     # Remove rows with missing values
     mydf = mydf.dropna(subset=independentcols)
 
-    mydf['Gender'] = mydf['Gender'].str.lower()
+    mydf['Gender'] = mydf['Gender'].map(
+        {'male': 0, 'female': 1, 'joint': 2, 'sex not available': 3})
 
     y = mydf[targetcol]
     ages = ['<25', '25-34', '35-44', '45-54', '55-64', '65-74', '>74']
@@ -31,17 +34,13 @@ if __name__ == "__main__":
         X, y, test_size=0.30, random_state=10)
 
     clf = rfc()
-    # Opção de Classificador (comentada):
-    # clf = gbc(n_estimators=300, max_depth=5, learning_rate=0.3  )
     clf.fit(X=X_train[independentcols], y=y_train)
     clf.independentcols = independentcols
     clf_acuracia = clf.score(X=X_test[independentcols], y=y_test)
     print("Modelo 01 (classificador), criado com acurácia de: [{0}]".format(
         clf_acuracia))
 
-    rgs = rfr()
-    # Opção de Regressor (comentada):
-    # rgs = gbr(n_estimators=300, max_depth=5, learning_rate=0.3 )
+    rgs = gbr(n_estimators=150, max_depth=4, learning_rate=0.02)
     rgs.fit(X=X_train[independentcols], y=y_train)
     rgs.independentcols = independentcols
     rgs_acuracia = rgs.score(X=X_test[independentcols], y=y_test)
