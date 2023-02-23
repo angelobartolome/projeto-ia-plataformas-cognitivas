@@ -25,8 +25,6 @@ def log(message):
 @app.route("/model", methods=['POST'])
 def pickModel(request=request):
     start = datetime.now()
-    # Log current request
-    print("/model: Request received with data: ", request.data)
 
     model_id = request.args.get('model_id')
 
@@ -37,7 +35,7 @@ def pickModel(request=request):
         return app.response_class(response=json.dumps(invalid_model_id()), mimetype='application/json')
 
     print("/model: Request received from {0} with data: {1} for model {2}".format(request.remote_addr,
-                                                                                  request.data, request.args.get('model_id')))
+                                                                                  request.json, request.args.get('model_id')))
 
     model_endpoint = models_endpoints[model_id]
 
@@ -57,10 +55,10 @@ def pickModel(request=request):
 def checkFace(request=request):
     start = datetime.now()
 
-    log("/face: Request received from {0} with data: {1}".format(
-        request.remote_addr, request.data))
+    log("/face: Request received from {0}".format(
+        request.remote_addr))
 
-    png = request.data
+    png = request.json
     response = processFace(png)
 
     end = datetime.now()
