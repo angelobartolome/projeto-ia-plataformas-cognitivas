@@ -10,4 +10,4 @@ docker rm $(docker ps --all -q)
 docker build -t python-main-image .
 
 # Run the docker-compose file
-docker-compose up
+docker-compose up -d
