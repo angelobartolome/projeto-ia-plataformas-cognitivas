@@ -1,9 +1,11 @@
 import json
 from flask import Flask, request
 import requests
-import os
 from face import processFace
 from error_module import missing_model_id, invalid_model_id
+from datetime import datetime
+from zlib import compress
+import io
 
 app = Flask(__name__)
 
@@ -13,10 +15,18 @@ models_endpoints = {
 }
 
 
+def log(message):
+    # Write to log file
+    with open('log.txt', 'a') as f:
+        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        f.write('{0} - {1}\n'.format(timestamp, message))
+
+
 @app.route("/model", methods=['POST'])
 def pickModel(request=request):
+    start = datetime.now()
     # Log current request
-    print("Request received with data: ", request.data)
+    print("/model: Request received with data: ", request.data)
 
     model_id = request.args.get('model_id')
 
@@ -26,21 +36,49 @@ def pickModel(request=request):
     if model_id not in models_endpoints:
         return app.response_class(response=json.dumps(invalid_model_id()), mimetype='application/json')
 
+    print("/model: Request received from {0} with data: {1} for model {2}".format(request.remote_addr,
+                                                                                  request.data, request.args.get('model_id')))
+
     model_endpoint = models_endpoints[model_id]
 
     _json = request.json
 
     response = requests.post(model_endpoint, json=_json)
 
+    end = datetime.now()
+    log("/model: Time elapsed: {0}".format(end - start))
+    log("/model: Response from model {0}: {1}".format(
+        model_id, response.json()))
+
     return app.response_class(response=json.dumps({"status": 'ok', "data": response.json()}), mimetype='application/json')
 
 
-@app.route("/face", methods=['POST'])
+@ app.route("/face", methods=['POST'])
 def checkFace(request=request):
+    start = datetime.now()
+
+    log("/face: Request received from {0} with data: {1}".format(
+        request.remote_addr, request.data))
+
     png = request.data
     response = processFace(png)
 
+    end = datetime.now()
+
+    log("/face: Time elapsed: {0}".format(end - start))
+    log("/face: Response: {0}".format(response))
+
     return app.response_class(response=json.dumps({"status": 'ok', "data": response}), mimetype='application/json')
+
+
+@app.route("/logs", methods=['GET'])
+def getLogs(request=request):
+    with open('log.txt', 'r') as f:
+        logs = f.read()
+        # Zip logs
+        logs = compress(logs.encode('utf-8'))
+        # Return logs as download
+        return app.send_file(io.BytesIO(logs), attachment_filename='logs.zip', as_attachment=True)
 
 
 if __name__ == '__main__':
