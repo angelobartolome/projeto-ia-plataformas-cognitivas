@@ -17,7 +17,7 @@ models_endpoints = {
 
 def log(message):
     # Write to log file
-    with open('/logs/log.txt', 'a') as f:
+    with open('/log/log.txt', 'a') as f:
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         f.write('{0} - {1}\n'.format(timestamp, message))
 
@@ -73,17 +73,17 @@ def checkFace(request=request):
 
 @app.route("/logs", methods=['GET'])
 def getLogs(request=request):
-    zip = ZipFile('/logs/logs.zip', 'w')
-    zip.write('/logs/log.txt')
+    zip = ZipFile('/log/logs.zip', 'w')
+    zip.write('/log/log.txt')
     zip.close()
 
     # Return logs as download
-    return send_file('/logs/logs.zip', as_attachment=True)
+    return send_file('/log/logs.zip', as_attachment=True)
 
 
 if __name__ == '__main__':
     # erase all logs
-    open('/logs/log.txt', 'w').close()
+    open('/log/log.txt', 'w').close()
 
     print('Starting Model Manager server...')
     app.run(port=80, host='0.0.0.0')
