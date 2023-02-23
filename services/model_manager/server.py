@@ -1,12 +1,12 @@
 import json
-from flask import Flask, request
+from flask import Flask, request, send_file
 import requests
 from face import processFace
 from error_module import missing_model_id, invalid_model_id
 from datetime import datetime
 from zlib import compress
 import io
-
+from zipfile import ZipFile
 app = Flask(__name__)
 
 models_endpoints = {
@@ -73,15 +73,19 @@ def checkFace(request=request):
 
 @app.route("/logs", methods=['GET'])
 def getLogs(request=request):
-    with open('log.txt', 'r') as f:
-        logs = f.read()
-        # Zip logs
-        logs = compress(logs.encode('utf-8'))
-        # Return logs as download
-        return app.send_file(io.BytesIO(logs), attachment_filename='logs.zip', as_attachment=True)
+    zip = ZipFile('logs.zip', 'w')
+    zip.write('log.txt')
+    zip.close()
+
+    # Return logs as download
+    return send_file('logs.zip', as_attachment=True)
 
 
 if __name__ == '__main__':
+    # Create empty log file if it doesn't exist
+    with open('log.txt', 'a') as f:
+        pass
+
     print('Starting Model Manager server...')
     app.run(port=80, host='0.0.0.0')
     print('Model Manager server ended!')
