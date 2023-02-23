@@ -36,6 +36,8 @@ def pickModel(request=request):
 
     print("/model: Request received from {0} with data: {1} for model {2}".format(request.remote_addr,
                                                                                   request.json, request.args.get('model_id')))
+    log("/model: Request received from {0} with data: {1} for model {2}".format(request.remote_addr,
+                                                                                request.json, request.args.get('model_id')))
 
     model_endpoint = models_endpoints[model_id]
 
@@ -44,6 +46,7 @@ def pickModel(request=request):
     response = requests.post(model_endpoint, json=_json)
 
     end = datetime.now()
+
     log("/model: Time elapsed: {0}".format(end - start))
     log("/model: Response from model {0}: {1}".format(
         model_id, response.json()))
