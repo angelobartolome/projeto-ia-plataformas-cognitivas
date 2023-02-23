@@ -58,7 +58,7 @@ def checkFace(request=request):
     log("/face: Request received from {0}".format(
         request.remote_addr))
 
-    png = request.json
+    png = request.data
     response = processFace(png)
 
     end = datetime.now()
