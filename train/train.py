@@ -1,8 +1,5 @@
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier as rfc
-from sklearn.ensemble import RandomForestRegressor as rfr
-from sklearn.ensemble import GradientBoostingClassifier as gbc
-from sklearn.ensemble import GradientBoostingRegressor as gbr
 import joblib
 # from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
@@ -40,17 +37,8 @@ if __name__ == "__main__":
     print("Modelo 01 (classificador), criado com acurácia de: [{0}]".format(
         clf_acuracia))
 
-    rgs = gbr(n_estimators=150, max_depth=4, learning_rate=0.02)
-    rgs.fit(X=X_train[independentcols], y=y_train)
-    rgs.independentcols = independentcols
-    rgs_acuracia = rgs.score(X=X_test[independentcols], y=y_test)
-    print("Modelo 02 (Regressor), criado com acurácia de: [{0}]".format(
-        rgs_acuracia))
-
     # Salva ambos os modelos
     joblib.dump(clf, './modelo01.joblib')
     print("Modelo 01 (classificador) salvo com sucesso.")
-    joblib.dump(rgs, './modelo02.joblib')
-    print("Modelo 02 (regressor) salvo com sucesso.")
 
     pass

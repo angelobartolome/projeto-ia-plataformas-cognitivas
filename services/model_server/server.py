@@ -41,7 +41,7 @@ def predict(request=request):
     # Converter idade de volta para o índice do range de idade
     x['age'] = getIndexOfAgeInRange(x['age'].values[0])
 
-    prediction = model.predict(x)
+    prediction = model.predict_proba(x)
     prediction = prediction.tolist()
 
     return app.response_class(response=json.dumps({"status": 'ok', "result": prediction[0]}), mimetype='application/json')
