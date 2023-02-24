@@ -3,6 +3,17 @@ import 'package:inadimplencia/service.dart';
 import 'package:inadimplencia/services/api.dart';
 import 'package:inadimplencia/services/face.dart';
 
+class ModelResult {
+  final double chancesForApproval;
+  final double chancesForDenial;
+
+  ModelResult(this.chancesForApproval, this.chancesForDenial);
+
+  bool isApproved() {
+    return chancesForApproval > chancesForDenial;
+  }
+}
+
 class FormViewmodel extends ChangeNotifier {
   int? _age;
   double? _monthlyIncome;
@@ -93,6 +104,13 @@ class FormViewmodel extends ChangeNotifier {
   String? get deniedError => _deniedError;
 
   void submit() async {
+    _deniedError = null;
+    _deniedByPicture = false;
+    _deniedByOther = false;
+    _showResult = false;
+    _isApproved = false;
+    notifyListeners();
+
     // 1. Process face
     var face = serviceLocator<FaceDetector>();
 
@@ -117,6 +135,20 @@ class FormViewmodel extends ChangeNotifier {
     // Check if face's age matches with the user's age
     var minAge = result.data?.face?.faceDetails![0].ageRange?.low ?? 0;
     var maxAge = result.data?.face?.faceDetails![0].ageRange?.high ?? 0;
+    var predictedGender = result.data?.face?.faceDetails![0].gender?.value;
+
+    predictedGender = predictedGender == "Male" ? "Masculino" : "Feminino";
+
+    if (gender != predictedGender) {
+      _deniedByPicture = true;
+      _isApproved = false;
+      _showResult = true;
+      _deniedError =
+          "O gênero da foto $predictedGender não confere com o gênero informado $gender";
+      notifyListeners();
+
+      return;
+    }
 
     if (age! < minAge || age! > maxAge) {
       _deniedByPicture = true;
@@ -133,27 +165,31 @@ class FormViewmodel extends ChangeNotifier {
     var model1 = await submitForModel("model1");
     var model2 = await submitForModel("model2");
 
-    if (model1 >= 0.5 || model2 >= 0.5) {
+    if (model1.isApproved() || model2.isApproved()) {
       _isApproved = true;
     } else {
       _isApproved = false;
       _deniedByOther = true;
     }
 
-    _modelsResult = [model1, model2];
+    _modelsResult = [model1.chancesForApproval, model2.chancesForApproval];
 
     _showResult = true;
     notifyListeners();
   }
 
-  Future<double> submitForModel(String model) async {
+  Future<ModelResult> submitForModel(String model) async {
     var response = await serviceLocator<Api>().submit(
       name: "Teste",
       modelId: model,
       age: age.toString(),
       income: monthlyIncome.toString(),
+      gender: gender?.toString(),
     );
 
-    return response.data?.result ?? -1;
+    return ModelResult(
+      response.data?.result?[0] ?? 0, // approval
+      response.data?.result?[1] ?? 0,
+    ); // denial
   }
 }

@@ -9,6 +9,7 @@ class Api {
     required String name,
     required String age,
     required String income,
+    required String? gender,
     String modelId = "model2",
   }) async {
     const URL = "http://35.222.14.71/model";
@@ -22,6 +23,11 @@ class Api {
         {
           "age": int.parse(age),
           "income": double.parse(income),
+          "gender": gender == "Masculino"
+              ? 0
+              : gender == "Feminino"
+                  ? 1
+                  : 3,
         }
       ]),
     );
@@ -44,12 +50,12 @@ class PredictApiResponse {
 
 class Data {
   String? status;
-  double? result;
+  List<double>? result;
 
   Data({this.status, this.result});
 
   Data.fromJson(Map<String, dynamic> json) {
     status = json['status'];
-    result = double.parse(json['result'].toString());
+    result = json['result'].cast<double>();
   }
 }

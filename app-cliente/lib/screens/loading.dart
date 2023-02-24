@@ -167,7 +167,7 @@ class _LoadingPictureScreenState extends State<LoadingPictureScreen> {
     if (formViewmodel.showResult == false) {
       return Container();
     }
-    Widget buildResultForModel(int model) {
+    Widget buildResultForModel(int model, String? name) {
       if (formViewmodel.modelsResult.isEmpty ||
           model > formViewmodel.modelsResult.length) {
         return Container();
@@ -176,15 +176,15 @@ class _LoadingPictureScreenState extends State<LoadingPictureScreen> {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
         child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                "Modelo ${model + 1}: ",
+                name ?? "Modelo ${model + 1}: ",
                 style: GoogleFonts.inter(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
-                  fontSize: 14,
+                  fontSize: 12,
                 ),
               ),
               Text(
@@ -196,7 +196,7 @@ class _LoadingPictureScreenState extends State<LoadingPictureScreen> {
                       ? Colors.green
                       : Colors.red,
                   fontWeight: FontWeight.bold,
-                  fontSize: 14,
+                  fontSize: 12,
                 ),
               ),
             ]),
@@ -206,8 +206,8 @@ class _LoadingPictureScreenState extends State<LoadingPictureScreen> {
     return Container(
       child: Column(
         children: [
-          buildResultForModel(0),
-          buildResultForModel(1),
+          buildResultForModel(0, "Modelo 1 (Random Forest): "),
+          buildResultForModel(1, "Modelo 2 (Deep Learning): "),
           const SizedBox(height: 24),
           Material(
             color: Colors.transparent,
