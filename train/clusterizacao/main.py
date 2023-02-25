@@ -1,3 +1,13 @@
+""" ?Arquivos obrigatórios para esse documento são 
+    dev.bat
+    run.bat
+    labelencoder_age.joblib
+    labelencoder_gender.joblib
+    scaler.joblib
+    cluster.joblib
+"""
+
+
 ''' ?Exemplo de post
 {
 	"income": 4980,
