@@ -27,6 +27,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from joblib import load
 import pandas as pd
+import uvicorn
 app = FastAPI()
 
 
@@ -68,8 +69,8 @@ def getAgeGroup(age):
 def teste(cont: list[Cont]):
 
     # Carrega o kmeans,labelencoder,scaler de normalização
-    kmeans, le_age, le_gender, scaler = load('cluster.joblib'), load(
-        'labelencoder_age.joblib'), load('labelencoder_gender.joblib'), load('scaler.joblib')
+    kmeans, le_age, le_gender, scaler = load('cluster/cluster.joblib'), load(
+        'cluster/labelencoder_age.joblib'), load('cluster/labelencoder_gender.joblib'), load('cluster/scaler.joblib')
 
     print(cont[0].age)
 
@@ -104,3 +105,8 @@ def teste(cont: list[Cont]):
         "classificacao": classi[result[0]]
     }
     return JSONResponse(content=response)
+
+
+# uvicorn
+if __name__ == '__main__':
+    uvicorn.run(app, host='0.0.0.0', port=9999)
