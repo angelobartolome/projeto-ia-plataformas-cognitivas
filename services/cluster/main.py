@@ -66,7 +66,7 @@ def getAgeGroup(age):
 
 
 @app.post('/')
-def teste(cont: list[Cont]):
+def teste(cont: object):
 
     # Carrega o kmeans,labelencoder,scaler de normalização
     kmeans, le_age, le_gender, scaler = load('cluster/cluster.joblib'), load(
