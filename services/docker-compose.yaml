@@ -32,7 +32,7 @@ services:
     networks:
       bridge_network:
     image: python-main-image
-    entrypoint: cd cluster && uvicorn main:app --host 0.0.0.0 --port 9999
+    entrypoint: uvicorn main:app --app-dir cluster --host 0.0.0.0 --port 9999
 
 networks:
   bridge_network:
