@@ -1,51 +1,9 @@
-""" ?Arquivos obrigatórios para esse documento são
-    dev.bat
-    run.bat
-    labelencoder_age.joblib
-    labelencoder_gender.joblib
-    scaler.joblib
-    cluster.joblib
-"""
-
-
-''' ?Exemplo de post
-{
-	"income": 4980,
-	"age": "55-64",
-	"gender": "Female"
-}
-'''
-
-
-# fastapi==0.92.0
-# uvicorn==0.20.0 pip install "uvicorn[standard]"
-
-
-from fastapi import FastAPI
-from fastapi.responses import JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from joblib import load
 import pandas as pd
-import uvicorn
-app = FastAPI()
-
-
-class Cont(BaseModel):
-    income: int
-    age: int
-    Gender: int
-
-
-origins = ['*']
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+import json
+from flask import Flask, request
+from joblib import load
+import sys
+app = Flask(__name__)
 
 
 def getAgeGroup(age):
@@ -65,24 +23,22 @@ def getAgeGroup(age):
                 return ageGroups[i]
 
 
-@app.post('/')
-def teste(cont: object):
+@app.route("/predict", methods=['POST'])
+def predict(request=request):
 
     # Carrega o kmeans,labelencoder,scaler de normalização
     kmeans, le_age, le_gender, scaler = load('cluster/cluster.joblib'), load(
         'cluster/labelencoder_age.joblib'), load('cluster/labelencoder_gender.joblib'), load('cluster/scaler.joblib')
 
-    print(cont[0].age)
-
     genderMap = ['Female', 'Joint', 'Male', 'Sex Not Available']
 
     df = pd.DataFrame({
-        "income": [cont[0].income],
-        "age": le_age.transform([getAgeGroup(cont[0].age)]),
+        "income": [request.json[0]['income']],
+        "age": le_age.transform([getAgeGroup(request.json[0]['age'])]),
         "year": [2020],
-        "Gender": le_gender.transform([genderMap[cont[0].Gender]])
+        "Gender": le_gender.transform([genderMap[request.json[0]['Gender']]])
     })
-    print(df)
+
     # Resultado da clusterização
     result = kmeans.predict(scaler.transform(df))
     # Resultado da clusterização
@@ -99,14 +55,15 @@ def teste(cont: object):
         "Risco de não pagamento"                           # 5
     )
 
-    response = {
+    r = {
         'propensao_media': media[result[0]],
         'grupo': int(result[0]),
         "classificacao": classi[result[0]]
     }
-    return JSONResponse(content=response)
+
+    return app.response_class(response=json.dumps(r), mimetype='application/json')
 
 
-# uvicorn
 if __name__ == '__main__':
-    uvicorn.run(app, host='0.0.0.0', port=9999)
+    print('Starting Model server for cluster')
+    app.run(port=9999, host='0.0.0.0')

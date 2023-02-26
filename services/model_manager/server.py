@@ -12,7 +12,7 @@ app = Flask(__name__)
 models_endpoints = {
     'model1': 'http://model01:9999/predict',
     'model2': 'http://model02:9999/predict',
-    'cluster': 'http://cluster:9999/',
+    'cluster': 'http://cluster:9999/predict',
 }
 
 
