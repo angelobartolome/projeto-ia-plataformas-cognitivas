@@ -28,6 +28,12 @@ services:
     image: python-main-image
     entrypoint: python3 model_server/server.py models_data/modelo02.joblib
 
+  cluster:
+    networks:
+      bridge_network:
+    image: python-main-image
+    entrypoint: cd cluster && uvicorn main:app --host 0.0.0.0 --port 9999
+
 networks:
   bridge_network:
     driver: bridge
